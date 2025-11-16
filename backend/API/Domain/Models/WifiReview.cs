@@ -48,7 +48,7 @@ public class WifiReview : TimeStampedEntity
         get => _text;
         set
         {
-            if (!string.IsNullOrEmpty(value) && (value.Length < 5 || value.Length > 100))
+            if (value != null && (value.Length < 5 || value.Length > 100))
             {
                 throw new ArgumentException("Text must be between 5 and 100 characters long");
             }
