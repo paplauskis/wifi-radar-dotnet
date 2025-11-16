@@ -83,9 +83,6 @@ public class WifiReviewTests
                 case "BuildingNumber":
                     Assert.Contains("Invalid building number", argEx.Message);
                     break;
-                case "Street":
-                    Assert.Contains("Street cannot be set to", argEx.Message);
-                    break;
                 default:
                     Assert.Contains($"{property.Name} cannot be set to", argEx.Message);
                     break;
