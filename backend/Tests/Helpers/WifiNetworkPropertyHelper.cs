@@ -14,6 +14,6 @@ internal class WifiNetworkPropertyHelper : PropertyHelper
         => GetProperties<int, WifiNetwork>(false, [0, -1, -10, -67, int.MinValue, int.MaxValue], true);
     
     public static IEnumerable<object[]> GetNullableIntProperties()
-        => GetProperties<int?, WifiNetwork>(true, [0, -1, -10, -67, int.MinValue, int.MaxValue], true);
+        => GetProperties<int?, WifiNetwork>(true, [930115, -1, -10, -67, int.MinValue, int.MaxValue], true);
 
 }
