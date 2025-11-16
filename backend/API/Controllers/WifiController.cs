@@ -1,7 +1,5 @@
-using API.Domain;
+using API.Domain.Dto;
 using API.Domain.Exceptions;
-using API.Domain.Models;
-using API.Exceptions;
 using API.Services.Interfaces.Wifi;
 using Microsoft.AspNetCore.Mvc;
 
