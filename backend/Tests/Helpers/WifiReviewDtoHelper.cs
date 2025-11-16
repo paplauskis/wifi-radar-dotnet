@@ -1,4 +1,4 @@
-using API.Domain;
+using API.Domain.Dto;
 using MongoDB.Bson;
 
 namespace Tests.Helpers;
