@@ -1,4 +1,4 @@
-using API.Domain;
+using API.Domain.Dto;
 using API.Domain.Models;
 
 namespace API.Services.Interfaces.Wifi;

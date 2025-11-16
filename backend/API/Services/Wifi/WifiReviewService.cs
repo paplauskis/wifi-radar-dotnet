@@ -1,5 +1,6 @@
 using API.Data.Repositories.Interfaces;
 using API.Domain;
+using API.Domain.Dto;
 using API.Services.Interfaces.Wifi;
 using API.Domain.Models;
 using API.Domain.Exceptions;
