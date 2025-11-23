@@ -41,6 +41,28 @@ public class MapController : ControllerBase
         }
     }
 
+    [HttpGet("searchByIp")]
+    public async Task<IActionResult> Search()
+    {
+        var ip = Request.Headers["X-Forwarded-For"].FirstOrDefault() 
+                 ?? HttpContext.Connection.RemoteIpAddress?.ToString();
+
+        try
+        {
+            var wifis = await _mapService.SearchWifisFromNearestCity(ip);
+            return Ok(wifis);
+        }
+        catch (ArgumentNullException ane)
+        {
+            return BadRequest(ane.Message);
+        }
+        catch (EmptyResponseException)
+        {
+            return NoContent();
+        }
+    }
+
+
     [HttpGet("coordinates")]
     public async Task<IActionResult> GetCoordinates(
         [FromQuery] string city,
