@@ -1,5 +1,6 @@
 using System.Text;
 using System.Text.Json;
+using API.Domain.Dto.IpapiDto;
 using API.Domain.Dto.OverpassDto;
 using API.Domain.Exceptions;
 using API.Helpers;
@@ -35,6 +36,22 @@ public class MapService : IMapService
         if (wifis.Count == 0)
             throw new EmptyResponseException("No wifi networks were found in the selected location.");
         
+        return wifis;
+    }
+
+    public async Task<List<OverpassResponseElementDto>> SearchWifisFromNearestCity(string? ip)
+    {
+        if (string.IsNullOrWhiteSpace(ip))
+            throw new ArgumentNullException(nameof(ip), "IP is null or empty");
+
+        var city = await GetCityFromIp(ip) 
+                   ?? throw new ArgumentNullException(nameof(ip), "Cannot get city from IP");
+        
+        var wifis = await SearchInCity(city);
+        
+        if (wifis.Count == 0)
+            throw new EmptyResponseException("No wifi networks were found in city");
+
         return wifis;
     }
 
@@ -141,5 +158,12 @@ public class MapService : IMapService
         }
         
         return dto.First();
+    }
+
+    private async Task<string?> GetCityFromIp(string ip)
+    {
+        var apiUrl = IpapiApi.GetRequestUrlProperty(ip, "city");
+        var response = await _client.GetAsync(apiUrl);
+        return await response.Content.ReadAsStringAsync();
     }
 }
