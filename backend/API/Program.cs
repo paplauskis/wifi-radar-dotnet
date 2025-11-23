@@ -12,6 +12,7 @@ using API.Services.Map;
 using API.Services.Users;
 using API.Services.Wifi;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 using MongoDB.Driver;
@@ -78,6 +79,10 @@ public class Program
         var app = builder.Build();
 
         app.UseCors("AllowFrontend");
+        app.UseForwardedHeaders(new ForwardedHeadersOptions
+        {
+            ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
+        });
 
         if (app.Environment.IsDevelopment())
         {
