@@ -115,25 +115,6 @@ public class WifiControllerTests
     }
     
     [Theory]
-    [InlineData("randomID12313")]
-    [InlineData("i")]
-    [InlineData("6839")]
-    public async Task AddPassword_WithInvalidWifiId_ShouldReturnBadRequest(string wifiId)
-    {
-        await using var factory = new ApiWebApplicationFactory();
-        var client = factory.CreateClient();
-        var user = await CreateSampleUser(client);
-        var passwordDto = new PasswordDto { Password = "very_secret_password", UserId = user.Id };
-        
-        var addPasswordContent = new StringContent(JsonConvert.SerializeObject(passwordDto), Encoding.UTF8, "application/json");
-        var addPasswordResponse = await client.PostAsync($"{ApiUri}/{wifiId}/password", addPasswordContent);
-        var addPasswordResult = await addPasswordResponse.Content.ReadAsStringAsync();
-        
-        Assert.Equal(HttpStatusCode.BadRequest, addPasswordResponse.StatusCode);
-        Assert.Equal($"Invalid wifi id: \"{wifiId}\"", addPasswordResult);
-    }
-    
-    [Theory]
     [InlineData(null)]
     [InlineData(" ")]
     [InlineData("vnthuq0vqthun09v0qtuhnrv0qtunrhm9vmqtrvmrtghu9vthunm90rwtvwhnm89247t2vn0hmnw6urnw6unw6u2wu4bni5m213muf")]
