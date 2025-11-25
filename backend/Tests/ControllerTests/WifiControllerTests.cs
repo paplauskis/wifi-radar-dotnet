@@ -141,16 +141,20 @@ public class WifiControllerTests
     {
         await using var factory = new ApiWebApplicationFactory();
         var client = factory.CreateClient();
-        var user = await CreateSampleUser(client);
-        var passwordDto = new PasswordDto { Password = password, UserId = user.Id };
-        var wifiNetworkDto = WifiNetworkDtoHelper.GetValidWifiNetworkDto(user);
+        var passwordDto = new PasswordDto
+        {
+            City = "Klaipėda",
+            Street = "Debreceno g.",
+            BuildingNumber = 50,
+            Password = password
+        };
         
         var addPasswordContent = new StringContent(JsonConvert.SerializeObject(passwordDto), Encoding.UTF8, "application/json");
-        var addPasswordResponse = await client.PostAsync($"{ApiUri}/{wifiNetworkDto.WifiId}/password", addPasswordContent);
+        var addPasswordResponse = await client.PostAsync($"{ApiUri}/passwords", addPasswordContent);
         var addPasswordResult = await addPasswordResponse.Content.ReadAsStringAsync();
         
         Assert.Equal(HttpStatusCode.BadRequest, addPasswordResponse.StatusCode);
-        Assert.Equal($"Invalid password: \"{passwordDto.Password}\"", addPasswordResult);
+        Assert.Contains($"Invalid password: \"{passwordDto.Password}\"", addPasswordResult);
     }
     
     [Theory]
