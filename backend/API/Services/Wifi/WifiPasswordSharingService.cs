@@ -27,8 +27,8 @@ public class WifiPasswordSharingService : IWifiPasswordSharingService
             throw new ArgumentException($"City ({passwordDto.City}), street ({passwordDto.Street}), or building number ({passwordDto.BuildingNumber}) values are invalid.");
         }
 
-        if (string.IsNullOrEmpty(passwordDto.Password))
-            throw new ArgumentException("Password cannot be empty.", nameof(passwordDto.Password));
+        if (string.IsNullOrWhiteSpace(passwordDto.Password) || passwordDto.Password.Length > 75)
+            throw new ArgumentException($"Invalid password: \"{passwordDto.Password}\"", nameof(passwordDto.Password));
 
         await _wifiRepository.AddPasswordAsync(
             passwordDto.City,
