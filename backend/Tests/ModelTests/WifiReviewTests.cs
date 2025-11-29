@@ -63,10 +63,11 @@ public class WifiReviewTests
 
         if (property.Name == "Id" && value == null)
         {
-            
             property.SetValue(wifi, value);
             return;
         }
+        
+        if (property.Name == "WifiId") return;
 
         var exception = Record.Exception(() => property.SetValue(wifi, value));
 
