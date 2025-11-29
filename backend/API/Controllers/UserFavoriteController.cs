@@ -59,6 +59,10 @@ public class UserFavoriteController : ControllerBase
         {
             return NotFound(e.Message);
         }
+        catch (ArgumentException e)
+        {
+            return BadRequest($"WifiNetworkDto parameter data is not valid; {e.Message}");
+        }
         catch (Exception)
         {
             return StatusCode(500, "Unexpected server error occurred");
