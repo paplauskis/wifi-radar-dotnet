@@ -39,7 +39,6 @@ public class Program
         builder.Services.AddScoped<IUserFavoriteService, UserFavoriteService>();
         builder.Services.AddScoped<IUserAuthService, UserAuthService>();
         builder.Services.AddScoped<IWifiPasswordSharingService, WifiPasswordSharingService>();
-        builder.Services.AddScoped<IUserReviewService, UserReviewService>();
         builder.Services.AddScoped<IMapService, MapService>();
         builder.Services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
         builder.Services.AddScoped<IPasswordHelper, PasswordService>();

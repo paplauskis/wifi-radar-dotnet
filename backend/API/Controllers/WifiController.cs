@@ -55,6 +55,10 @@ public class WifiController : ControllerBase
         {
             return BadRequest(e.Message);
         }
+        catch (ArgumentException e)
+        {
+            return BadRequest(e.Message);
+        }
         catch (Exception)
         {
             return StatusCode(500, "Unexpected server error occurred");

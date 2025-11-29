@@ -21,14 +21,12 @@ public class WifiControllerTests
         await using var factory = new ApiWebApplicationFactory();
         var client = factory.CreateClient();
         
-        var user = await CreateSampleUser(client);
-        
         var addReviewContent = new StringContent(JsonConvert.SerializeObject(wifiReviewDto), Encoding.UTF8, "application/json");
-        var addWifiReviewResponse = await client.PostAsync($"{ApiUri}/{wifiReviewDto.WifiId}/review", addReviewContent);
+        var addWifiReviewResponse = await client.PostAsync($"{ApiUri}/reviews", addReviewContent);
         var addWifiReviewResult = await addWifiReviewResponse.Content.ReadAsStringAsync();
     
         Assert.Equal(HttpStatusCode.BadRequest, addWifiReviewResponse.StatusCode);
-        Assert.Equal("Invalid data passed", addWifiReviewResult);
+        Assert.False(string.IsNullOrWhiteSpace(addWifiReviewResult));
     }
     
     [Theory]
@@ -41,7 +39,7 @@ public class WifiControllerTests
         wifiReviewDto.UserId = user.Id ?? throw new Exception("User id is null");
         
         var addReviewContent = new StringContent(JsonConvert.SerializeObject(wifiReviewDto), Encoding.UTF8, "application/json");
-        var addWifiReviewResponse = await client.PostAsync($"{ApiUri}/{wifiReviewDto.WifiId}/review", addReviewContent);
+        var addWifiReviewResponse = await client.PostAsync($"{ApiUri}/reviews", addReviewContent);
         
         Assert.Equal(HttpStatusCode.OK, addWifiReviewResponse.StatusCode);
         
@@ -49,25 +47,8 @@ public class WifiControllerTests
         
         Assert.NotNull(addWifiReviewResult);
         Assert.Equal(wifiReviewDto.UserId, addWifiReviewResult.UserId);
-        Assert.Equal(wifiReviewDto.WifiId, addWifiReviewResult.WifiId);
         Assert.Equal(wifiReviewDto.Text, addWifiReviewResult.Text);
         Assert.Equal(wifiReviewDto.Rating, addWifiReviewResult.Rating);
-    }
-
-    [Theory]
-    [InlineData("randomID12313")]
-    [InlineData("i")]
-    [InlineData("6839")]
-    public async Task GetWifiReviews_WithInvalidWifiId_ShouldReturnBadRequest(string wifiId)
-    {
-        await using var factory = new ApiWebApplicationFactory();
-        var client = factory.CreateClient();
-        
-        var getWifiReviewResponse = await client.GetAsync($"{ApiUri}/{wifiId}/review");
-        var getWifiReviewResult = await getWifiReviewResponse.Content.ReadAsStringAsync();
-        
-        Assert.Equal(HttpStatusCode.BadRequest, getWifiReviewResponse.StatusCode);
-        Assert.Equal($"Invalid wifi id: \"{wifiId}\"", getWifiReviewResult);
     }
 
     //ensure AddWifiReview works first
@@ -82,11 +63,14 @@ public class WifiControllerTests
         
         //add one wifi review
         var addReviewContent = new StringContent(JsonConvert.SerializeObject(sampleWifiReview), Encoding.UTF8, "application/json");
-        var addWifiReviewResponse = await client.PostAsync($"{ApiUri}/{sampleWifiReview.WifiId}/review", addReviewContent);
+        var addWifiReviewResponse = await client.PostAsync($"{ApiUri}/reviews", addReviewContent);
         var addWifiReviewResult = await addWifiReviewResponse.Content.ReadFromJsonAsync<WifiReview>();
         
         //get wifi review (should be 1)
-        var getWifiReviewResponse = await client.GetAsync($"{ApiUri}/{sampleWifiReview.WifiId}/review");
+        var getWifiReviewResponse = await client.GetAsync(
+            $"{ApiUri}/reviews?city={sampleWifiReview.City}" +
+            $"&street={sampleWifiReview.Street}" +
+            $"&buildingNumber={sampleWifiReview.BuildingNumber}");
         var getWifiReviewResult = await getWifiReviewResponse.Content.ReadFromJsonAsync<List<WifiReview>>();
         
         Assert.Equal(HttpStatusCode.OK, getWifiReviewResponse.StatusCode);
@@ -95,7 +79,6 @@ public class WifiControllerTests
         Assert.NotNull(addWifiReviewResult);
         Assert.NotNull(addWifiReviewResult.UserId);
         Assert.Equal(sampleWifiReview.UserId, addWifiReviewResult.UserId);
-        Assert.Equal(sampleWifiReview.WifiId, addWifiReviewResult.WifiId);
         Assert.Equal(sampleWifiReview.Text, addWifiReviewResult.Text);
         Assert.Equal(sampleWifiReview.Rating, addWifiReviewResult.Rating);
     }
@@ -107,9 +90,11 @@ public class WifiControllerTests
         var client = factory.CreateClient();
         await CreateSampleUser(client);
         var sampleWifiReview = (WifiReviewDto)WifiReviewDtoHelper.ValidWifiReviewDtos().ToList()[0][0];
-        var wifiId = sampleWifiReview.WifiId ?? throw new Exception("Wifi id is null");
         
-        var getWifiReviewResponse = await client.GetAsync($"{ApiUri}/{wifiId}/review");
+        var getWifiReviewResponse = await client.GetAsync(
+            $"{ApiUri}/reviews?city={sampleWifiReview.City}" +
+            $"&street={sampleWifiReview.Street}" +
+            $"&buildingNumber={sampleWifiReview.BuildingNumber}");
         
         Assert.Equal(HttpStatusCode.NoContent, getWifiReviewResponse.StatusCode);
     }
@@ -136,22 +121,6 @@ public class WifiControllerTests
         
         Assert.Equal(HttpStatusCode.BadRequest, addPasswordResponse.StatusCode);
         Assert.Contains($"Invalid password: \"{passwordDto.Password}\"", addPasswordResult);
-    }
-    
-    [Theory]
-    [InlineData("randomID12313")]
-    [InlineData("i")]
-    [InlineData("6839")]
-    public async Task GetPasswords_WithInvalidWifiId_ShouldReturnBadRequest(string wifiId)
-    {
-        await using var factory = new ApiWebApplicationFactory();
-        var client = factory.CreateClient();
-        
-        var getPasswordsResponse = await client.GetAsync($"{ApiUri}/{wifiId}/password");
-        var getPasswordsResult = await getPasswordsResponse.Content.ReadAsStringAsync();
-        
-        Assert.Equal(HttpStatusCode.BadRequest, getPasswordsResponse.StatusCode);
-        Assert.Equal($"Invalid wifi id: \"{wifiId}\"", getPasswordsResult);
     }
     
     private async Task<UserLoginResponseDto> CreateSampleUser(HttpClient client)

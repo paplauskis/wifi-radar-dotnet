@@ -80,12 +80,14 @@ public class WifiReviewRepositoryTests: BaseRepositoryTests<WifiReview, WifiRevi
             await Collection.InsertManyAsync(TestData);
     
             var expected = TestData
-                .Where(e => e.WifiId == review.WifiId)
-                .OrderBy(e => e.WifiId)
+                .Where(e => e.City == review.City 
+                            && e.Street == review.Street 
+                            && e.BuildingNumber == review.BuildingNumber)
+                .OrderBy(e => e.CreatedAt)
                 .ToList();
-            var fetched = await Repo.GetReviewsByWifiIdAsync(review.WifiId);
+            var fetched = await Repo.GetReviewsByAddressAsync(review.City, review.Street, review.BuildingNumber);
             var actual = fetched
-                .OrderBy(e => e.WifiId)
+                .OrderBy(e => e.CreatedAt)
                 .ToList();
     
     
@@ -127,7 +129,7 @@ public class WifiReviewRepositoryTests: BaseRepositoryTests<WifiReview, WifiRevi
             
             var fetched = await Repo.GetReviewsByWifiIdAsync(wifiId);
             var actual = fetched
-                .OrderBy(e => e.WifiId)
+                .OrderBy(e => e.CreatedAt)
                 .ToList();
 
             Assert.Empty(actual);
@@ -151,7 +153,6 @@ public class WifiReviewRepositoryTests: BaseRepositoryTests<WifiReview, WifiRevi
     {
         Assert.Equal(expected.Id, actual.Id);
         Assert.Equal(expected.UserId, actual.UserId);
-        Assert.Equal(expected.WifiId, actual.WifiId);
         Assert.Equal(expected.Text, actual.Text);
         Assert.Equal(expected.Rating, actual.Rating);   
     }

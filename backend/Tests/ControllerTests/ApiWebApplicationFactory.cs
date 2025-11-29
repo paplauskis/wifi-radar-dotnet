@@ -70,7 +70,6 @@ public class ApiWebApplicationFactory : WebApplicationFactory<Program>, IAsyncLi
             services.AddScoped<IUserFavoriteService, UserFavoriteService>();
             services.AddScoped<IUserAuthService, UserAuthService>();
             services.AddScoped<IWifiPasswordSharingService, WifiPasswordSharingService>();
-            services.AddScoped<IUserReviewService, UserReviewService>();
             services.AddScoped<IMapService, MapService>();
             services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
             services.AddScoped<IPasswordHelper, PasswordService>();
