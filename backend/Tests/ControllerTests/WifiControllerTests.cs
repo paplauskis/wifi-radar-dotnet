@@ -83,7 +83,10 @@ public class WifiControllerTests
         var addWifiReviewResult = await addWifiReviewResponse.Content.ReadFromJsonAsync<WifiReview>();
         
         //get wifi review (should be 1)
-        var getWifiReviewResponse = await client.GetAsync($"{ApiUri}/reviews");
+        var getWifiReviewResponse = await client.GetAsync(
+            $"{ApiUri}/reviews?city={sampleWifiReview.City}" +
+            $"&street={sampleWifiReview.Street}" +
+            $"&buildingNumber={sampleWifiReview.BuildingNumber}");
         var getWifiReviewResult = await getWifiReviewResponse.Content.ReadFromJsonAsync<List<WifiReview>>();
         
         Assert.Equal(HttpStatusCode.OK, getWifiReviewResponse.StatusCode);
