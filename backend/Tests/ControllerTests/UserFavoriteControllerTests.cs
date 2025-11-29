@@ -88,7 +88,7 @@ public class UserFavoriteControllerTests
         var addFavoriteResult = await addFavoriteResponse.Content.ReadAsStringAsync();
     
         Assert.Equal(HttpStatusCode.Conflict, addFavoriteResponse.StatusCode);
-        Assert.Equal("The same wifi network already is saved by this user", addFavoriteResult);
+        Assert.Equal("Wifi network is already saved to favorites by this user.", addFavoriteResult);
     }
     
     [Theory]
