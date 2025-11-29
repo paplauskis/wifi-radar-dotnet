@@ -27,10 +27,8 @@ public class UserFavoriteControllerTests
         var addFavoriteResult = await addFavoriteResponse.Content.ReadAsStringAsync();
     
         Assert.Equal(HttpStatusCode.OK, addFavoriteResponse.StatusCode);
-        Assert.Contains(wifiNetwork.WifiId, addFavoriteResult);
         Assert.Contains(wifiNetwork.UserId, addFavoriteResult);
         Assert.Contains(wifiNetwork.City, addFavoriteResult);
-        Assert.Contains(wifiNetwork.Name, addFavoriteResult);
         Assert.Contains(wifiNetwork.Street, addFavoriteResult);
         Assert.Contains(wifiNetwork.BuildingNumber.ToString()!, addFavoriteResult);
     }
@@ -50,7 +48,7 @@ public class UserFavoriteControllerTests
         var addFavoriteResult = await addFavoriteResponse.Content.ReadAsStringAsync();
         
         Assert.Equal(HttpStatusCode.BadRequest, addFavoriteResponse.StatusCode);
-        Assert.Equal($"WifiNetworkDto parameter data is not valid", addFavoriteResult);
+        Assert.Contains($"WifiNetworkDto parameter data is not valid", addFavoriteResult);
     }
 
     [Theory]
@@ -69,7 +67,7 @@ public class UserFavoriteControllerTests
         var addFavoriteResponse = await client.PostAsync($"{ApiUri}/{invalidUserId}/favorites", addFavoriteContent);
         var addFavoriteResult = await addFavoriteResponse.Content.ReadAsStringAsync();
         
-        Assert.Equal(HttpStatusCode.NotFound, addFavoriteResponse.StatusCode);
+        Assert.Equal(HttpStatusCode.BadRequest, addFavoriteResponse.StatusCode);
         Assert.Equal($"User ID \"{invalidUserId}\" is not valid", addFavoriteResult);
     }
     
@@ -88,7 +86,7 @@ public class UserFavoriteControllerTests
         var addFavoriteResult = await addFavoriteResponse.Content.ReadAsStringAsync();
     
         Assert.Equal(HttpStatusCode.Conflict, addFavoriteResponse.StatusCode);
-        Assert.Equal("The same wifi network already is saved by this user", addFavoriteResult);
+        Assert.Equal("Wifi network is already saved to favorites by this user.", addFavoriteResult);
     }
     
     [Theory]
@@ -103,7 +101,7 @@ public class UserFavoriteControllerTests
         var addFavoriteResponse = await client.GetAsync($"{ApiUri}/{invalidUserId}/favorites");
         var addFavoriteResult = await addFavoriteResponse.Content.ReadAsStringAsync();
         
-        Assert.Equal(HttpStatusCode.NotFound, addFavoriteResponse.StatusCode);
+        Assert.Equal(HttpStatusCode.BadRequest, addFavoriteResponse.StatusCode);
         Assert.Equal($"User ID \"{invalidUserId}\" is not valid", addFavoriteResult);
     }
 

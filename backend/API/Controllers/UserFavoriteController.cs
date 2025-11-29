@@ -23,7 +23,7 @@ public class UserFavoriteController : ControllerBase
         try
         {
             var favorites = await _userFavoriteService.GetUserFavoritesAsync(userId);
-            return Ok(favorites);
+            return favorites.Count == 0 ? NoContent() : Ok(favorites);
         }
         catch (NotFoundException e)
         {
@@ -58,6 +58,10 @@ public class UserFavoriteController : ControllerBase
         catch (UserNotFoundException e)
         {
             return NotFound(e.Message);
+        }
+        catch (ArgumentException e)
+        {
+            return BadRequest($"WifiNetworkDto parameter data is not valid; {e.Message}");
         }
         catch (Exception)
         {

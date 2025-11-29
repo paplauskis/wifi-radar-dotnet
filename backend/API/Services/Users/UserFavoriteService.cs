@@ -25,6 +25,9 @@ namespace API.Services.Users
             if (string.IsNullOrWhiteSpace(userId))
                 throw new InvalidDataException("username cannot be null or empty.");
             
+            if (!ObjectId.TryParse(userId, out _)) 
+                throw new InvalidDataException($"User ID \"{userId}\" is not valid");
+            
             var ids = await GetFavoriteNetworkIdsAsync(userId);
             if (ids == null || !ids.Any()) return new List<WifiNetworkDto>();
 
@@ -47,11 +50,15 @@ namespace API.Services.Users
         {
             if (string.IsNullOrWhiteSpace(userId))
                 throw new InvalidInputException("Username cannot be null or empty.");
+            
+            if (!ObjectId.TryParse(userId, out _)) 
+                throw new InvalidInputException($"User ID \"{userId}\" is not valid");
+            
             if (wifi == null || string.IsNullOrWhiteSpace(wifi.WifiId))
                 wifi.WifiId = ObjectId.GenerateNewId().ToString();
 
             var existingWifi = await _wifiNetworks.Find(w =>
-            w.Id == userId &&
+            w.UserId == userId &&
             w.City == wifi.City &&
             w.Street == wifi.Street &&
             w.BuildingNumber == wifi.BuildingNumber
@@ -59,7 +66,8 @@ namespace API.Services.Users
 
             bool doesWifiAlreadyExist = existingWifi != null;
             if (doesWifiAlreadyExist)
-                throw new WifiNetworkAlreadyExistsException("Wifi network is already saved to favorites by this user.", wifi);
+                throw new WifiNetworkAlreadyExistsException(
+                    "Wifi network is already saved to favorites by this user.", wifi);
 
             var user = await _users.Find(u => u.Id == userId).FirstOrDefaultAsync();
             if (user == null)
