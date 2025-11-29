@@ -23,7 +23,7 @@ public class UserFavoriteController : ControllerBase
         try
         {
             var favorites = await _userFavoriteService.GetUserFavoritesAsync(userId);
-            return Ok(favorites);
+            return favorites.Count == 0 ? NoContent() : Ok(favorites);
         }
         catch (NotFoundException e)
         {
