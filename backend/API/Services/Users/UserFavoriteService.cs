@@ -25,6 +25,9 @@ namespace API.Services.Users
             if (string.IsNullOrWhiteSpace(userId))
                 throw new InvalidDataException("username cannot be null or empty.");
             
+            if (!ObjectId.TryParse(userId, out _)) 
+                throw new InvalidDataException($"User ID \"{userId}\" is not valid");
+            
             var ids = await GetFavoriteNetworkIdsAsync(userId);
             if (ids == null || !ids.Any()) return new List<WifiNetworkDto>();
 
