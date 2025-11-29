@@ -51,22 +51,6 @@ public class WifiControllerTests
         Assert.Equal(wifiReviewDto.Rating, addWifiReviewResult.Rating);
     }
 
-    // [Theory]
-    // [InlineData("randomID12313")]
-    // [InlineData("i")]
-    // [InlineData("6839")]
-    // public async Task GetWifiReviews_WithInvalidWifiId_ShouldReturnBadRequest(string wifiId)
-    // {
-    //     await using var factory = new ApiWebApplicationFactory();
-    //     var client = factory.CreateClient();
-    //     
-    //     var getWifiReviewResponse = await client.GetAsync($"{ApiUri}/reviews");
-    //     var getWifiReviewResult = await getWifiReviewResponse.Content.ReadAsStringAsync();
-    //     
-    //     Assert.Equal(HttpStatusCode.BadRequest, getWifiReviewResponse.StatusCode);
-    //     Assert.Equal($"Invalid wifi id: \"{wifiId}\"", getWifiReviewResult);
-    // }
-
     //ensure AddWifiReview works first
     [Fact]
     public async Task GetWifiReviews_WhenReviewsExist_ShouldReturnOk()
