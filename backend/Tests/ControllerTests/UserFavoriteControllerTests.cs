@@ -69,7 +69,7 @@ public class UserFavoriteControllerTests
         var addFavoriteResponse = await client.PostAsync($"{ApiUri}/{invalidUserId}/favorites", addFavoriteContent);
         var addFavoriteResult = await addFavoriteResponse.Content.ReadAsStringAsync();
         
-        Assert.Equal(HttpStatusCode.NotFound, addFavoriteResponse.StatusCode);
+        Assert.Equal(HttpStatusCode.BadRequest, addFavoriteResponse.StatusCode);
         Assert.Equal($"User ID \"{invalidUserId}\" is not valid", addFavoriteResult);
     }
     
