@@ -1,5 +1,6 @@
 using System.Text.Json.Serialization;
 using DnsClient;
+using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 
 namespace API.Domain.Models;
@@ -24,10 +25,10 @@ public class WifiReview : TimeStampedEntity
     [JsonPropertyName("UserID")]
     public string UserId
     {
-        get =>_userId;
+        get => _userId;
         set
         {
-            if (string.IsNullOrWhiteSpace(value))
+            if (string.IsNullOrWhiteSpace(value) || !ObjectId.TryParse(value, out _))
             {
                 throw new ArgumentException($"UserId cannot be set to {value}");
             }
