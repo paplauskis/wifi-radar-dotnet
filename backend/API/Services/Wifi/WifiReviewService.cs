@@ -1,10 +1,8 @@
 using API.Data.Repositories.Interfaces;
-using API.Domain;
 using API.Domain.Dto;
 using API.Services.Interfaces.Wifi;
 using API.Domain.Models;
 using API.Domain.Exceptions;
-using MongoDB.Bson;
 
 namespace API.Services.Wifi;
 
@@ -43,7 +41,6 @@ public class WifiReviewService : IWifiReviewService
         
         var newReview = new WifiReview
         {
-            WifiId = ObjectId.GenerateNewId().ToString(),
             UserId = wifiReviewDto.UserId,
             Rating = (int)wifiReviewDto.Rating,
             Text = wifiReviewDto.Text,
