@@ -7,7 +7,7 @@ namespace API.Domain.Models;
 public class WifiReview : TimeStampedEntity
 {
     private string _wifiId;
-
+    
     [BsonElement("WifiNetworkID")]
     [JsonPropertyName("WifiNetworkID")]
     public string WifiId
@@ -15,10 +15,6 @@ public class WifiReview : TimeStampedEntity
         get => _wifiId;
         set
         {
-            if (string.IsNullOrWhiteSpace(value))
-            {
-                throw new ArgumentException($"WifiId cannot be set to {value}");
-            } 
             _wifiId = value;
         }
     }
