@@ -51,21 +51,21 @@ public class WifiControllerTests
         Assert.Equal(wifiReviewDto.Rating, addWifiReviewResult.Rating);
     }
 
-    [Theory]
-    [InlineData("randomID12313")]
-    [InlineData("i")]
-    [InlineData("6839")]
-    public async Task GetWifiReviews_WithInvalidWifiId_ShouldReturnBadRequest(string wifiId)
-    {
-        await using var factory = new ApiWebApplicationFactory();
-        var client = factory.CreateClient();
-        
-        var getWifiReviewResponse = await client.GetAsync($"{ApiUri}/reviews");
-        var getWifiReviewResult = await getWifiReviewResponse.Content.ReadAsStringAsync();
-        
-        Assert.Equal(HttpStatusCode.BadRequest, getWifiReviewResponse.StatusCode);
-        Assert.Equal($"Invalid wifi id: \"{wifiId}\"", getWifiReviewResult);
-    }
+    // [Theory]
+    // [InlineData("randomID12313")]
+    // [InlineData("i")]
+    // [InlineData("6839")]
+    // public async Task GetWifiReviews_WithInvalidWifiId_ShouldReturnBadRequest(string wifiId)
+    // {
+    //     await using var factory = new ApiWebApplicationFactory();
+    //     var client = factory.CreateClient();
+    //     
+    //     var getWifiReviewResponse = await client.GetAsync($"{ApiUri}/reviews");
+    //     var getWifiReviewResult = await getWifiReviewResponse.Content.ReadAsStringAsync();
+    //     
+    //     Assert.Equal(HttpStatusCode.BadRequest, getWifiReviewResponse.StatusCode);
+    //     Assert.Equal($"Invalid wifi id: \"{wifiId}\"", getWifiReviewResult);
+    // }
 
     //ensure AddWifiReview works first
     [Fact]
@@ -103,9 +103,11 @@ public class WifiControllerTests
         var client = factory.CreateClient();
         await CreateSampleUser(client);
         var sampleWifiReview = (WifiReviewDto)WifiReviewDtoHelper.ValidWifiReviewDtos().ToList()[0][0];
-        var wifiId = sampleWifiReview.WifiId ?? throw new Exception("Wifi id is null");
         
-        var getWifiReviewResponse = await client.GetAsync($"{ApiUri}/reviews");
+        var getWifiReviewResponse = await client.GetAsync(
+            $"{ApiUri}/reviews?city={sampleWifiReview.City}" +
+            $"&street={sampleWifiReview.Street}" +
+            $"&buildingNumber={sampleWifiReview.BuildingNumber}");
         
         Assert.Equal(HttpStatusCode.NoContent, getWifiReviewResponse.StatusCode);
     }
