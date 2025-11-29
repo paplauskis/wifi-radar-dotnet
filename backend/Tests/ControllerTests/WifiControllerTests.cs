@@ -24,7 +24,7 @@ public class WifiControllerTests
         var user = await CreateSampleUser(client);
         
         var addReviewContent = new StringContent(JsonConvert.SerializeObject(wifiReviewDto), Encoding.UTF8, "application/json");
-        var addWifiReviewResponse = await client.PostAsync($"{ApiUri}/{wifiReviewDto.WifiId}/review", addReviewContent);
+        var addWifiReviewResponse = await client.PostAsync($"{ApiUri}/reviews", addReviewContent);
         var addWifiReviewResult = await addWifiReviewResponse.Content.ReadAsStringAsync();
     
         Assert.Equal(HttpStatusCode.BadRequest, addWifiReviewResponse.StatusCode);
@@ -41,7 +41,7 @@ public class WifiControllerTests
         wifiReviewDto.UserId = user.Id ?? throw new Exception("User id is null");
         
         var addReviewContent = new StringContent(JsonConvert.SerializeObject(wifiReviewDto), Encoding.UTF8, "application/json");
-        var addWifiReviewResponse = await client.PostAsync($"{ApiUri}/{wifiReviewDto.WifiId}/review", addReviewContent);
+        var addWifiReviewResponse = await client.PostAsync($"{ApiUri}/reviews", addReviewContent);
         
         Assert.Equal(HttpStatusCode.OK, addWifiReviewResponse.StatusCode);
         
@@ -49,7 +49,6 @@ public class WifiControllerTests
         
         Assert.NotNull(addWifiReviewResult);
         Assert.Equal(wifiReviewDto.UserId, addWifiReviewResult.UserId);
-        Assert.Equal(wifiReviewDto.WifiId, addWifiReviewResult.WifiId);
         Assert.Equal(wifiReviewDto.Text, addWifiReviewResult.Text);
         Assert.Equal(wifiReviewDto.Rating, addWifiReviewResult.Rating);
     }
@@ -63,7 +62,7 @@ public class WifiControllerTests
         await using var factory = new ApiWebApplicationFactory();
         var client = factory.CreateClient();
         
-        var getWifiReviewResponse = await client.GetAsync($"{ApiUri}/{wifiId}/review");
+        var getWifiReviewResponse = await client.GetAsync($"{ApiUri}/reviews");
         var getWifiReviewResult = await getWifiReviewResponse.Content.ReadAsStringAsync();
         
         Assert.Equal(HttpStatusCode.BadRequest, getWifiReviewResponse.StatusCode);
@@ -82,11 +81,11 @@ public class WifiControllerTests
         
         //add one wifi review
         var addReviewContent = new StringContent(JsonConvert.SerializeObject(sampleWifiReview), Encoding.UTF8, "application/json");
-        var addWifiReviewResponse = await client.PostAsync($"{ApiUri}/{sampleWifiReview.WifiId}/review", addReviewContent);
+        var addWifiReviewResponse = await client.PostAsync($"{ApiUri}/reviews", addReviewContent);
         var addWifiReviewResult = await addWifiReviewResponse.Content.ReadFromJsonAsync<WifiReview>();
         
         //get wifi review (should be 1)
-        var getWifiReviewResponse = await client.GetAsync($"{ApiUri}/{sampleWifiReview.WifiId}/review");
+        var getWifiReviewResponse = await client.GetAsync($"{ApiUri}/reviews");
         var getWifiReviewResult = await getWifiReviewResponse.Content.ReadFromJsonAsync<List<WifiReview>>();
         
         Assert.Equal(HttpStatusCode.OK, getWifiReviewResponse.StatusCode);
@@ -95,7 +94,6 @@ public class WifiControllerTests
         Assert.NotNull(addWifiReviewResult);
         Assert.NotNull(addWifiReviewResult.UserId);
         Assert.Equal(sampleWifiReview.UserId, addWifiReviewResult.UserId);
-        Assert.Equal(sampleWifiReview.WifiId, addWifiReviewResult.WifiId);
         Assert.Equal(sampleWifiReview.Text, addWifiReviewResult.Text);
         Assert.Equal(sampleWifiReview.Rating, addWifiReviewResult.Rating);
     }
@@ -109,7 +107,7 @@ public class WifiControllerTests
         var sampleWifiReview = (WifiReviewDto)WifiReviewDtoHelper.ValidWifiReviewDtos().ToList()[0][0];
         var wifiId = sampleWifiReview.WifiId ?? throw new Exception("Wifi id is null");
         
-        var getWifiReviewResponse = await client.GetAsync($"{ApiUri}/{wifiId}/review");
+        var getWifiReviewResponse = await client.GetAsync($"{ApiUri}/reviews");
         
         Assert.Equal(HttpStatusCode.NoContent, getWifiReviewResponse.StatusCode);
     }
