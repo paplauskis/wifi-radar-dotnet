@@ -51,7 +51,7 @@ namespace API.Services.Users
                 wifi.WifiId = ObjectId.GenerateNewId().ToString();
 
             var existingWifi = await _wifiNetworks.Find(w =>
-            w.Id == userId &&
+            w.UserId == userId &&
             w.City == wifi.City &&
             w.Street == wifi.Street &&
             w.BuildingNumber == wifi.BuildingNumber
