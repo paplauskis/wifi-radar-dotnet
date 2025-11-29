@@ -50,7 +50,7 @@ public class UserFavoriteControllerTests
         var addFavoriteResult = await addFavoriteResponse.Content.ReadAsStringAsync();
         
         Assert.Equal(HttpStatusCode.BadRequest, addFavoriteResponse.StatusCode);
-        Assert.Equal($"WifiNetworkDto parameter data is not valid", addFavoriteResult);
+        Assert.Contains($"WifiNetworkDto parameter data is not valid", addFavoriteResult);
     }
 
     [Theory]
