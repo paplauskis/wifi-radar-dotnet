@@ -47,6 +47,10 @@ namespace API.Services.Users
         {
             if (string.IsNullOrWhiteSpace(userId))
                 throw new InvalidInputException("Username cannot be null or empty.");
+            
+            if (!ObjectId.TryParse(userId, out _)) 
+                throw new InvalidInputException($"User ID \"{userId}\" is not valid");
+            
             if (wifi == null || string.IsNullOrWhiteSpace(wifi.WifiId))
                 wifi.WifiId = ObjectId.GenerateNewId().ToString();
 
@@ -59,7 +63,8 @@ namespace API.Services.Users
 
             bool doesWifiAlreadyExist = existingWifi != null;
             if (doesWifiAlreadyExist)
-                throw new WifiNetworkAlreadyExistsException("Wifi network is already saved to favorites by this user.", wifi);
+                throw new WifiNetworkAlreadyExistsException(
+                    "Wifi network is already saved to favorites by this user.", wifi);
 
             var user = await _users.Find(u => u.Id == userId).FirstOrDefaultAsync();
             if (user == null)
