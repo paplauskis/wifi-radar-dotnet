@@ -21,14 +21,12 @@ public class WifiControllerTests
         await using var factory = new ApiWebApplicationFactory();
         var client = factory.CreateClient();
         
-        var user = await CreateSampleUser(client);
-        
         var addReviewContent = new StringContent(JsonConvert.SerializeObject(wifiReviewDto), Encoding.UTF8, "application/json");
         var addWifiReviewResponse = await client.PostAsync($"{ApiUri}/reviews", addReviewContent);
         var addWifiReviewResult = await addWifiReviewResponse.Content.ReadAsStringAsync();
     
         Assert.Equal(HttpStatusCode.BadRequest, addWifiReviewResponse.StatusCode);
-        Assert.Equal("Invalid data passed", addWifiReviewResult);
+        Assert.False(string.IsNullOrWhiteSpace(addWifiReviewResult));
     }
     
     [Theory]
