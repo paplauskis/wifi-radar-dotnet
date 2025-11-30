@@ -60,3 +60,5 @@ Story: Wifi informacija
 Kaip naudotojas, 
 noriu matyti tinklų parsisiuntimo ir įkėlimo greičius,
 kad galėčiau įvertinti mano lūkesčius atitinkančius wi-fi tinklus
+
+s
