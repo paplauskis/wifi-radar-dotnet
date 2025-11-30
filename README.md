@@ -7,6 +7,8 @@
 
 ### API endpoints
 
+- GET api/ping
+- GET api/ping/overpass-api
 - GET api/map/search?city={value}
 - GET api/map/search?city={value}&radius={value}
 - GET api/map/coordinates?city={value}&street={value}&buildingNumber={value}
