@@ -4,11 +4,13 @@ using API.Data.Repositories.Interfaces;
 using API.Domain.Models;
 using API.Services.Auth;
 using API.Services.Database;
+using API.Services.Interfaces.Status;
 using API.Services.Interfaces.Auth;
 using API.Services.Interfaces.Map;
 using API.Services.Interfaces.User;
 using API.Services.Interfaces.Wifi;
 using API.Services.Map;
+using API.Services.Status;
 using API.Services.Users;
 using API.Services.Wifi;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -43,6 +45,7 @@ public class Program
         builder.Services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
         builder.Services.AddScoped<IPasswordHelper, PasswordService>();
         builder.Services.AddScoped<IAuthenticatable, JwtService>();
+        builder.Services.AddScoped<IOverpassApiStatusService, OverpassApiStatusService>();
 
         builder.Services.AddCors(options =>
         {
