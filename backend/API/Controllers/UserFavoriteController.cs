@@ -68,23 +68,26 @@ public class UserFavoriteController : ControllerBase
             return StatusCode(500, "Unexpected server error occurred");
         }
     }
-
-    // this method does not work, needs to be fixed
-    [HttpDelete("{userId}/favorites/{wifiId}")]
-    public async Task<IActionResult> DeleteFavorite([FromRoute] string userId, [FromRoute] string wifiId)
+    
+    [HttpDelete("{userId}/favorites")]
+    public async Task<IActionResult> DeleteFavorite(
+        [FromRoute] string userId,
+        [FromQuery] string city, 
+        [FromQuery] string street, 
+        [FromQuery] int buildingNumber)
     {
         try
         { 
-            await _userFavoriteService.DeleteUserFavoriteAsync(userId, wifiId);
+            await _userFavoriteService.DeleteUserFavoriteAsync(userId, city, street, buildingNumber);
             return Ok();
         }
-        catch (NotFoundException e)
-        {
-            return NotFound(e.Message);
-        }
-        catch (InvalidInputException e)
+        catch (ArgumentException e)
         {
             return BadRequest(e.Message);
+        }
+        catch (UserNotFoundException e)
+        {
+            return NotFound(e.Message);
         }
         catch (Exception)
         {
