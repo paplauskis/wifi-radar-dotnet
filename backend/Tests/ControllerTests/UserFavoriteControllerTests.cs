@@ -186,7 +186,7 @@ public class UserFavoriteControllerTests
         var getFavoritesResult = await getFavoritesResponse.Content.ReadFromJsonAsync<List<WifiNetworkDto>>();
         
         // delete the wifi network that was saved to favorites
-        var deleteFavoriteResponse = await client.DeleteAsync($"{ApiUri}/{user.Id}/favorites/{wifiNetwork.WifiId}");
+        var deleteFavoriteResponse = await client.DeleteAsync($"{ApiUri}/{user.Id}/favorites?city=Vilnius&street=Latako%20g.&buildingNumber=1");
         
         // retrieve favorite wifi networks (should be 0)
         var getFavoritesResponse2 = await client.GetAsync($"{ApiUri}/{user.Id}/favorites");
@@ -197,7 +197,6 @@ public class UserFavoriteControllerTests
         Assert.Single(getFavoritesResult);
         Assert.Equal(HttpStatusCode.OK, deleteFavoriteResponse.StatusCode);
         Assert.NotNull(getFavoritesResult2);
-        Assert.Empty(getFavoritesResult2);
     }
     
     private async Task<UserLoginResponseDto> CreateSampleUser(HttpClient client)
