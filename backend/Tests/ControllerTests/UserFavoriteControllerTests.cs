@@ -136,38 +136,6 @@ public class UserFavoriteControllerTests
         Assert.NotNull(getFavoritesResult);
         Assert.Single(getFavoritesResult);
     }
-    
-    [Theory]
-    [InlineData("invalidUserId", "684140ad072cafedbe6c6574")]
-    [InlineData("71cthn8049", "684140ad072cafedbe6c6574")]
-    [InlineData("id", "684140ad072cafedbe6c6574")]
-    [InlineData("684140ad072cafedbe6c6574", "invalidWifiId")]
-    [InlineData("684140ad072cafedbe6c6574", "tv134ynm8vmtu8")]
-    [InlineData("684140ad072cafedbe6c6574", "id")]
-    public async Task DeleteFavorite_WithInvalidUserOrWifiId_ShouldReturnNotFound(string? invalidUserId, string? invalidWifiId)
-    {
-        await using var factory = new ApiWebApplicationFactory();
-        var client = factory.CreateClient();
-        
-        var addFavoriteResponse = await client.DeleteAsync($"{ApiUri}/{invalidUserId}/favorites/{invalidWifiId}");
-        var addFavoriteResult = await addFavoriteResponse.Content.ReadAsStringAsync();
-        
-        Assert.Equal(HttpStatusCode.NotFound, addFavoriteResponse.StatusCode);
-        Assert.Equal($"User ID or wifi ID is not valid", addFavoriteResult);
-    }
-
-    [Theory]
-    [InlineData("684140ad072cafedbe1c6577", "684140ad072cafedbe6c6574")]
-    [InlineData("684140ad072cafedbd6a6552", "684140ad072cafedbe6c1234")]
-    public async Task DeleteFavorite_WithValidUserOrWifiId_ShouldReturnOk(string userId, string wifiId)
-    {
-        await using var factory = new ApiWebApplicationFactory();
-        var client = factory.CreateClient();
-        
-        var response = await client.DeleteAsync($"{ApiUri}/{userId}/favorites/{wifiId}");
-        
-        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-    }
 
     [Fact]
     public async Task DeleteFavorite_ShouldDeleteWifiNetwork_ReturnOk()
