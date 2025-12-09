@@ -86,20 +86,28 @@ namespace API.Services.Users
             return wifi;
         }
 
-        public async Task DeleteUserFavoriteAsync(string userId, string wifiId)
+        public async Task DeleteUserFavoriteAsync(string userId, string city, string street, int buildingNumber)
         {
             if (string.IsNullOrWhiteSpace(userId))
-                throw new InvalidDataException("Username cannot be null or empty.");
-            if (string.IsNullOrWhiteSpace(wifiId))
-                throw new InvalidDataException("WifiId cannot be null or empty");
+                throw new ArgumentNullException("Username cannot be null or empty.");
+
+            if (string.IsNullOrEmpty(city) || string.IsNullOrEmpty(street) || buildingNumber < 1)
+            {
+                throw new ArgumentException($"City ({city}), street ({street}), or building number ({buildingNumber}) values are invalid.");
+            }
 
             var user = await _users.Find(u => u.Id == userId).FirstOrDefaultAsync();
             if (user == null)
                 throw new UserNotFoundException(userId);
+            
+            var filter = Builders<WifiNetwork>.Filter.And(
+                Builders<WifiNetwork>.Filter.Eq(s => s.UserId, userId),
+                Builders<WifiNetwork>.Filter.Eq(s => s.City, city),
+                Builders<WifiNetwork>.Filter.Eq(s => s.Street, street),
+                Builders<WifiNetwork>.Filter.Eq(s => s.BuildingNumber, buildingNumber)
+            );
 
-            var filter = Builders<User>.Filter.Eq(u => u.Id, userId);
-            var update = Builders<User>.Update.Pull(u => u.FavoriteNetworkId, wifiId);
-            await _users.UpdateOneAsync(filter, update);
+            await _wifiNetworks.DeleteOneAsync(filter);
         }
         
         private async Task<List<string>> GetFavoriteNetworkIdsAsync(string userId)
