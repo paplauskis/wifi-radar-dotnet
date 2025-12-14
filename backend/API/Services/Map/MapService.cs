@@ -1,10 +1,16 @@
 using System.Text;
+using System.Text.Encodings.Web;
 using System.Text.Json;
+using System.Text.Unicode;
+using System.Xml.Serialization;
+using API.Domain.Dto;
 using API.Domain.Dto.IpapiDto;
 using API.Domain.Dto.OverpassDto;
 using API.Domain.Exceptions;
 using API.Helpers;
+using API.Helpers.Extensions;
 using API.Services.Interfaces.Map;
+using Microsoft.IdentityModel.Tokens;
 
 namespace API.Services.Map;
 
@@ -37,6 +43,26 @@ public class MapService : IMapService
             throw new EmptyResponseException("No wifi networks were found in the selected location.");
         
         return wifis;
+    }
+
+    public async Task<FileResponseDto> SearchAndSaveToFile(string city, string? acceptHeader, int? radius)
+    {
+        if (string.IsNullOrWhiteSpace(acceptHeader))
+            throw new ArgumentNullException(nameof(acceptHeader), "Accept header not specified");
+        
+        if (acceptHeader != "text/json" && acceptHeader != "text/xml")
+            throw new ArgumentException("Accept header not supported.");
+        
+        var fileType = acceptHeader.GetFileType();
+        var wifiList = await Search(city, radius);
+        var data = SerializeByFileType(wifiList, fileType);
+        
+        return new FileResponseDto
+        {
+            FileContent = Encoding.UTF8.GetBytes(data),
+            FileName = $"wifis-{DateTime.UtcNow}.{fileType}",
+            HttpHeader = acceptHeader
+        };
     }
 
     public async Task<List<OverpassResponseElementDto>> SearchWifisFromNearestCity(string? ip)
@@ -165,5 +191,32 @@ public class MapService : IMapService
         var apiUrl = IpapiApi.GetRequestUrlProperty(ip, "city");
         var response = await _client.GetAsync(apiUrl);
         return await response.Content.ReadAsStringAsync();
+    }
+
+    private static string SerializeByFileType(List<OverpassResponseElementDto> dataToBeSerialized, string fileType)
+    {
+        string data;
+        
+        if (fileType == "json")
+        {
+            data = JsonSerializer.Serialize(dataToBeSerialized, new JsonSerializerOptions
+            {
+                WriteIndented = true, Encoder = JavaScriptEncoder.Create(UnicodeRanges.All)
+            });
+            
+            return data;
+        }
+
+        if (fileType == "xml")
+        {
+            var serializer = new XmlSerializer(dataToBeSerialized.GetType());
+
+            using var stringWriter = new StringWriter();
+            serializer.Serialize(stringWriter, dataToBeSerialized);
+            data = stringWriter.ToString();
+            return data;
+        }
+
+        throw new ArgumentException($"Unknown file type: {fileType}");
     }
 }
