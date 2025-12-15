@@ -2,6 +2,7 @@ using System.Text;
 using API.Data.Repositories;
 using API.Data.Repositories.Interfaces;
 using API.Domain.Models;
+using API.Middleware;
 using API.Services.Auth;
 using API.Services.Database;
 using API.Services.Interfaces.Status;
@@ -96,6 +97,7 @@ public class Program
 
         app.UseAuthorization();
         app.UseAuthentication();
+        app.UseMiddleware<RequestLoggingMiddleware>();
 
         app.MapControllers();
 
