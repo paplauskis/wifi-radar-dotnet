@@ -8,20 +8,28 @@
         <p class="text-subtitle-1 mb-6">
           Explore and discover free public Wi-Fi hotspots near you.
         </p>
-        <v-form>
-          <v-btn color="primary" size="large" block @click="goToMap"> Start Exploring </v-btn>
-        </v-form>
+        <div class="cta-stack">
+          <template v-if="!loggedIn">
+            <v-btn color="primary" size="large" block to="/login"> Login </v-btn>
+            <v-btn color="primary" variant="outlined" size="large" block to="/register">
+              Register
+            </v-btn>
+          </template>
+          <template v-else>
+            <v-btn color="primary" size="large" block @click="goToMap"> Start Exploring </v-btn>
+          </template>
+        </div>
       </v-col>
     </v-row>
   </v-container>
 </template>
 
 <script setup>
-import { ref } from 'vue'
 import { useRouter } from 'vue-router'
+import { isLoggedIn } from '@/services/auth'
 
-const searchCity = ref('')
 const router = useRouter()
+const loggedIn = isLoggedIn
 
 const goToMap = () => {
   router.push('/map')
@@ -34,5 +42,12 @@ h1 {
 }
 p {
   color: #666;
+}
+.cta-stack {
+  width: 100%;
+  max-width: 320px;
+  margin: 0 auto;
+  display: grid;
+  gap: 12px;
 }
 </style>

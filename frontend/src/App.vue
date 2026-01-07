@@ -26,11 +26,11 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { clearAuthToken, isLoggedIn } from '@/services/auth'
 
-const loggedIn = ref(true) 
+const loggedIn = isLoggedIn
 
 const logout = () => {
-  loggedIn.value = false 
+  clearAuthToken()
 }
 </script>
